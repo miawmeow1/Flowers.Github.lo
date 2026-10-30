@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A special gift animation">
+  <meta name="keywords" content="flower, animation, gift, javascript">
+  <title>I Have Something For You</title>
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="gift_box.png" type="image/x-icon">
+
+  <!-- CSS Utama -->
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+  <!-- Background Malam / Estetik -->
+  <div class="night"></div>
+
+  <!-- Efek Kelopak Sakura Bertaburan -->
+  <div class="sakura-container">
+    <div class="petal" style="--left: 10%; --speed: 7s; --delay: 0s;"></div>
+    <div class="petal" style="--left: 30%; --speed: 9s; --delay: 2s;"></div>
+    <div class="petal" style="--left: 50%; --speed: 6s; --delay: 1s;"></div>
+    <div class="petal" style="--left: 70%; --speed: 8s; --delay: 3s;"></div>
+    <div class="petal" style="--left: 90%; --speed: 10s; --delay: 1.5s;"></div>
+    <div class="petal" style="--left: 20%; --speed: 8s; --delay: 4s;"></div>
+    <div class="petal" style="--left: 40%; --speed: 7.5s; --delay: 2.5s;"></div>
+    <div class="petal" style="--left: 60%; --speed: 9.5s; --delay: 0.5s;"></div>
+    <div class="petal" style="--left: 80%; --speed: 6.5s; --delay: 3.5s;"></div>
+  </div>
+
+  <!-- Judul / Ucapan di atas (diisi otomatis oleh index.js dengan efek typing) -->
+  <h1 class="title"></h1>
+
+  <!-- Bagian Tombol & Logo Gift Kreatif -->
+  <div
+    style="position: absolute; top: 60vh; width: 100%; display: flex; justify-content: center; align-items: center; z-index: 10;">
+    <a href="flowers.html" class="gift-box-btn">
+      <!-- Logo / Ikon Gift SVG yang Cantik -->
+      <svg class="gift-icon" height="28" width="28" fill="#ff6b81" viewBox="0 0 24 24">
+        <path
+          d="M20 7h-4V5c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0-2-.9-2-2V9c0-1.1-.9-2-2-2zM10 5h4v2h-4V5zM4 9h16v3H4V9zm16 11H4v-5h16v5z" />
+      </svg>
+      <span class="gift-text">Open</span>
+    </a>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+
+</html>
