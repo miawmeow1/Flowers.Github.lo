@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cosmic Bouquet & Butterflies - I Love You</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #020008;
+      overflow: hidden;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    .start-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle at center, #11052c 0%, #020008 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      transition: opacity 1.2s ease, visibility 1.2s ease;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .start-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .icon-surprise {
+      font-size: 4rem;
+      margin-bottom: 15px;
+      animation: float 2.5s ease-in-out infinite;
+    }
+
+    .subtitle-surprise {
+      font-size: 1.2rem;
+      font-weight: 300;
+      letter-spacing: 2px;
+      color: #ffd1dc;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px rgba(255, 77, 109, 0.5);
+    }
+
+    .open-btn {
+      padding: 16px 42px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #fff;
+      background: linear-gradient(135deg, #ff4d6d, #7209b7);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 0 30px rgba(255, 77, 109, 0.6);
+      transition: all 0.3s ease;
+      animation: pulse 2s infinite;
+    }
+
+    .open-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 50px rgba(255, 77, 109, 0.9);
+      background: linear-gradient(135deg, #ff758f, #8338ec);
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 25px rgba(255, 77, 109, 0.6); }
+      50% { transform: scale(1.06); box-shadow: 0 0 45px rgba(255, 77, 109, 0.9); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .glowing-frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      border: 2px solid rgba(255, 77, 109, 0.3);
+      box-shadow: inset 0 0 50px rgba(186, 85, 211, 0.25), 0 0 30px rgba(255, 77, 109, 0.3);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .ui-layer {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 90vh;
+      width: 100%;
+      pointer-events: none;
+    }
+
+    .text-container {
+      display: flex;
+      gap: 20px;
+      font-size: 3.8rem;
+      font-weight: 900;
+      letter-spacing: 5px;
+      margin-top: 20px;
+    }
+
+    .word {
+      opacity: 0;
+      transform: translateY(-30px) scale(0.6);
+      transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-shadow: 0 0 20px rgba(255, 77, 109, 0.9), 0 0 40px rgba(255, 77, 109, 0.6);
+      color: #ffffff;
+    }
+
+    .word.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .word.highlight {
+      color: #ff4d6d;
+      text-shadow: 0 0 25px rgba(255, 77, 109, 1), 0 0 60px rgba(255, 77, 109, 0.9), 0 0 90px rgba(255, 77, 109, 0.7);
+    }
+
+    .btn-container {
+      pointer-events: auto;
+      margin-bottom: 15px;
+    }
+
+    .btn-replay {
+      padding: 12px 32px;
+      background: rgba(18, 10, 36, 0.6);
+      border: 1px solid rgba(255, 119, 182, 0.5);
+      color: #ffd1dc;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      transition: all 0.4s ease;
+      box-shadow: 0 0 20px rgba(255, 77, 109, 0.2);
+    }
+
+    .btn-replay:hover {
+      background: rgba(255, 77, 109, 0.3);
+      border-color: #ff4d6d;
+      color: #fff;
+      box-shadow: 0 0 30px rgba(255, 77, 109, 0.8);
+      transform: translateY(-3px) scale(1.05);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="start-overlay" id="startOverlay">
+    <div class="icon-surprise">💌</div>
+    <div class="subtitle-surprise">Iki onok sesuatu gawe kone</div>
+    <button class="open-btn" onclick="openMagic()">Buka Pesan ✨</button>
+  </div>
+
+  <div class="glowing-frame"></div>
+  <canvas id="canvas"></canvas>
+
+  <div class="ui-layer">
+    <div class="text-container">
+      <span class="word">KULO</span>
+      <span class="word">TRESNO</span>
+      <span class="word">MUNG</span>
+      <span class="word highlight">KARO</span>
+      <span class="word highlight">AWAKMU</span>
+    </div>
+
+    <div class="btn-container">
+      <button class="btn-replay" onclick="resetAnimation()">Putar Ulang Animasi</button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    let progress = 0;
+    let isStarted = false;
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      initCosmos();
+    }
+    window.addEventListener('resize', resize);
+
+    let stars = [];
+    let galaxies = [];
+    let whitePetals = [];
+    let butterflies = [];
+
+    function initCosmos() {
+      stars = [];
+      for (let i = 0; i < 220; i++) {
+        stars.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: Math.random() * 2 + 0.5,
+          color: ['#fff', '#4cc9f0', '#ff758f', '#ffb703'][Math.floor(Math.random() * 4)],
+          alpha: Math.random(),
+          speed: Math.random() * 0.02 + 0.005
+        });
+      }
+
+      galaxies = [
+        { x: width * 0.15, y: height * 0.25, size: 85, angle: 0, color: '#4cc9f0' },
+        { x: width * 0.85, y: height * 0.2, size: 105, angle: 1, color: '#7209b7' },
+        { x: width * 0.18, y: height * 0.75, size: 95, angle: 2, color: '#ff4d6d' }
+      ];
+
+      // Inisialisasi Kelopak Bunga Putih Berjatuhan
+      whitePetals = [];
+      for (let i = 0; i < 40; i++) {
+        whitePetals.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          size: Math.random() * 4 + 2,
+          speedY: Math.random() * 0.8 + 0.3,
+          speedX: Math.random() * 1 - 0.5,
+          rotation: Math.random() * Math.PI,
+          rotSpeed: Math.random() * 0.02 - 0.01,
+          opacity: Math.random() * 0.7 + 0.3
+        });
+      }
+
+      // Inisialisasi Kupu-kupu Putih
+      butterflies = [
+        { x: width * 0.3, y: height * 0.4, baseAngle: 0, radiusX: 180, radiusY: 90, speed: 0.8, size: 0.8 },
+        { x: width * 0.7, y: height * 0.45, baseAngle: Math.PI, radiusX: 200, radiusY: 100, speed: 0.6, size: 0.7 }
+      ];
+    }
+
+    function drawGalaxy(g) {
+      ctx.save();
+      ctx.translate(g.x, g.y);
+      g.angle += 0.002;
+      ctx.rotate(g.angle);
+
+      for (let i = 0; i < 140; i++) {
+        const r = (i / 140) * g.size;
+        const theta = i * 0.2;
+        const x = r * Math.cos(theta);
+        const y = r * Math.sin(theta);
+
+        ctx.fillStyle = g.color;
+        ctx.globalAlpha = (1 - i / 140) * 0.4;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = g.color;
+        ctx.beginPath();
+        ctx.arc(x, y, Math.random() * 2 + 0.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    // Efek Kembang Api berbentuk Kelopak Bunga Estetik
+    let fireworks = [];
+
+    function createFirework(x, y) {
+      const particleCount = 50;
+      const colors = ['#ffffff', '#ffd1dc', '#ff758f', '#ff4d6d', '#b5179e'];
+      const baseColor = colors[Math.floor(Math.random() * colors.length)];
+
+      for (let i = 0; i < particleCount; i++) {
+        const angle = (Math.PI * 2 / particleCount) * i;
+        const speed = Math.random() * 4 + 1.5;
+        fireworks.push({
+          x: x,
+          y: y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          alpha: 1,
+          decay: Math.random() * 0.015 + 0.008,
+          color: baseColor,
+          size: Math.random() * 3 + 1.5
+        });
+      }
+    }
+
+    function updateFireworks() {
+      for (let i = fireworks.length - 1; i >= 0; i--) {
+        const p = fireworks[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.03;
+        p.vx *= 0.98;
+        p.vy *= 0.98;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          fireworks.splice(i, 1);
+        } else {
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, p.alpha);
+          ctx.fillStyle = p.color;
+          ctx.shadowColor = p.color;
+          ctx.shadowBlur = 12;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+    }
+
+    // Menggambar Kupu-kupu Putih Estetik
+    function drawButterfly(b, time) {
+      ctx.save();
+      const currentX = b.x + Math.cos(time * b.speed + b.baseAngle) * b.radiusX;
+      const currentY = b.y + Math.sin(time * (b.speed * 1.5)) * b.radiusY;
+
+      ctx.translate(currentX, currentY);
+      ctx.scale(b.size, b.size);
+
+      // Gerakan sayap mengepak
+      const wingFlap = Math.abs(Math.sin(time * 15));
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.shadowColor = '#ffffff';
+      ctx.shadowBlur = 15;
+
+      // Sayap Kiri
+      ctx.save();
+      ctx.scale(wingFlap, 1);
+      ctx.beginPath();
+      ctx.ellipse(-12, -8, 14, 8, -0.3, 0, Math.PI * 2);
+      ctx.ellipse(-8, 8, 10, 6, 0.3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Sayap Kanan
+      ctx.save();
+      ctx.scale(wingFlap, 1);
+      ctx.beginPath();
+      ctx.ellipse(12, -8, 14, 8, 0.3, 0, Math.PI * 2);
+      ctx.ellipse(8, 8, 10, 6, -0.3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Badan Kupu-kupu
+      ctx.fillStyle = '#ff758f';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 2, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // Menggambar Taburan Kelopak Bunga Putih
+    function updateAndDrawWhitePetals() {
+      ctx.save();
+      whitePetals.forEach(p => {
+        p.y += p.speedY;
+        p.x += p.speedX + Math.sin(p.y * 0.02) * 0.5;
+        p.rotation += p.rotSpeed;
+
+        if (p.y > height) {
+          p.y = -10;
+          p.x = Math.random() * width;
+        }
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation);
+        ctx.globalAlpha = p.opacity;
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = '#ff4d6d';
+        ctx.shadowBlur = 8;
+
+        // Bentuk Kelopak Daun/Bunga Kecil
+        ctx.beginPath();
+        ctx.ellipse(0, 0, p.size * 1.5, p.size, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+      ctx.restore();
+    }
+
+    const flowerConfigs = [
+      { xRel: 0.50, yRel: 0.44, scale: 1.05, curveX: 0,   delay: 0 },
+      { xRel: 0.34, yRel: 0.50, scale: 0.82, curveX: -60, delay: 0.12 },
+      { xRel: 0.66, yRel: 0.50, scale: 0.82, curveX: 60,  delay: 0.18 },
+      { xRel: 0.22, yRel: 0.60, scale: 0.60, curveX: -110, delay: 0.28 },
+      { xRel: 0.78, yRel: 0.60, scale: 0.60, curveX: 110,  delay: 0.32 }
+    ];
+
+    function drawStem(config, globalProgress, startX, startY) {
+      const localProgress = Math.max(0, Math.min(1, (globalProgress - config.delay) * 2));
+      if (localProgress <= 0) return { currentX: startX, currentY: startY, p: 0 };
+
+      const targetX = width * config.xRel;
+      const targetY = height * config.yRel;
+      const controlX = startX + config.curveX;
+      const controlY = startY - (startY - targetY) * 0.5;
+
+      ctx.save();
+      ctx.lineWidth = 3.5 * config.scale;
+      ctx.strokeStyle = '#2d6a4f';
+      ctx.shadowColor = '#52b788';
+      ctx.shadowBlur = 15;
+
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      const t = localProgress;
+      const currentX = (1-t)*(1-t)*startX + 2*(1-t)*t*controlX + t*t*targetX;
+      const currentY = (1-t)*(1-t)*startY + 2*(1-t)*t*controlY + t*t*targetY;
+
+      ctx.quadraticCurveTo(controlX, controlY, currentX, currentY);
+      ctx.stroke();
+
+      if (localProgress > 0.4) {
+        const leafP = (localProgress - 0.4) * 1.6;
+        drawLeaf(currentX, currentY + 25, config.curveX >= 0, leafP, config.scale);
+      }
+
+      ctx.restore();
+      return { currentX, currentY, p: localProgress };
+    }
+
+    function drawLeaf(x, y, isRight, p, scale) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(isRight ? p * scale : -p * scale, p * scale);
+      ctx.rotate(0.4);
+
+      ctx.fillStyle = 'rgba(82, 183, 136, 0.4)';
+      ctx.strokeStyle = '#74c69d';
+      ctx.shadowColor = '#52b788';
+      ctx.shadowBlur = 12;
+      ctx.lineWidth = 1.5;
+
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(50, -25, 80, -5);
+      ctx.quadraticCurveTo(40, 40, 0, 0);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawRealisticPetal(centerX, centerY, radius, angle, color, p, scale) {
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(angle);
+      ctx.scale(p * scale, p * scale);
+
+      ctx.beginPath();
+      // Bentuk kelopak bunga berlapis yang natural
+      ctx.moveTo(0, 0);
+      ctx.bezierCurveTo(-radius * 0.5, -radius * 0.4, -radius * 0.4, -radius * 1.3, 0, -radius * 1.5);
+      ctx.bezierCurveTo(radius * 0.4, -radius * 1.3, radius * 0.5, -radius * 0.4, 0, 0);
+
+      const grad = ctx.createLinearGradient(0, 0, 0, -radius * 1.5);
+      grad.addColorStop(0, color.start);
+      grad.addColorStop(1, color.end);
+
+      ctx.fillStyle = grad;
+      ctx.shadowColor = color.glow;
+      ctx.shadowBlur = 25;
+      ctx.fill();
+
+      ctx.lineWidth = 1.2;
+      ctx.strokeStyle = color.stroke;
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawFlower(x, y, stemProgress, scale) {
+      const bloom = Math.max(0, Math.min(1, (stemProgress - 0.7) * 3.3));
+      if (bloom <= 0) return;
+
+      // Lapisan Kelopak Luar (Lebih besar & lembut)
+      for (let i = 0; i < 14; i++) {
+        const angle = (i * Math.PI * 2) / 14;
+        drawRealisticPetal(x, y, 110, angle, {
+          start: 'rgba(255, 77, 109, 0.15)',
+          end: 'rgba(114, 9, 183, 0.35)',
+          stroke: 'rgba(255, 119, 182, 0.6)',
+          glow: '#ff4d6d'
+        }, bloom, scale);
+      }
+
+      // Lapisan Kelopak Tengah
+      for (let i = 0; i < 10; i++) {
+        const angle = (i * Math.PI * 2) / 10 + Math.PI / 10;
+        drawRealisticPetal(x, y, 75, angle, {
+          start: 'rgba(255, 117, 143, 0.3)',
+          end: 'rgba(247, 37, 133, 0.5)',
+          stroke: '#ff4d6d',
+          glow: '#f72585'
+        }, bloom * 0.9, scale);
+      }
+
+      // Putik Bunga Bercahaya di Tengah
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(x, y, 14 * bloom * scale, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#ffb703';
+      ctx.shadowBlur = 35;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      const time = Date.now() * 0.0015;
+
+      if (isStarted && progress < 1.0) {
+        progress += 0.0035;
+        if (progress > 1.0) progress = 1.0; 
+      }
+
+      // Background Bintang & Galaksi
+      stars.forEach(s => {
+        s.alpha += Math.sin(time * 3 + s.x) * s.speed;
+        ctx.fillStyle = s.color;
+        ctx.globalAlpha = Math.max(0.1, Math.min(1, s.alpha));
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      galaxies.forEach(drawGalaxy);
+
+      // Taburan Kelopak Putih Jatuh
+      updateAndDrawWhitePetals();
+
+      const baseStartX = width / 2;
+      const baseStartY = height - 20;
+
+      if (isStarted) {
+        // Buat Pita/Ikatan Buket di Bagian Bawah Batang agar Terlihat Asli
+        ctx.save();
+        ctx.strokeStyle = '#ffd1dc';
+        ctx.lineWidth = 4;
+        ctx.shadowColor = '#ff4d6d';
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.ellipse(baseStartX, baseStartY - 120, 25, 10, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+
+        // Gambar Tangkai & Bunga
+        flowerConfigs.forEach((cfg) => {
+          const stemRes = drawStem(cfg, progress, baseStartX, baseStartY);
+          if (stemRes.p > 0) {
+            drawFlower(stemRes.currentX, stemRes.currentY, stemRes.p, cfg.scale);
+          }
+        });
+
+        // Kupu-kupu Putih Beterbangan
+        if (progress > 0.5) {
+          butterflies.forEach(b => drawButterfly(b, time));
+        }
+
+        // Kembang Api Bunga Estetik di Langit
+        if (progress >= 0.65) {
+          if (Math.random() < 0.03) {
+            const rx = Math.random() * (width * 0.7) + (width * 0.15);
+            const ry = Math.random() * (height * 0.4) + (height * 0.1);
+            createFirework(rx, ry);
+          }
+        }
+
+        updateFireworks();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function animateText() {
+      const words = document.querySelectorAll('.word');
+      words.forEach(w => w.classList.remove('visible'));
+
+      words.forEach((word, index) => {
+        setTimeout(() => {
+          word.classList.add('visible');
+          const wordRect = word.getBoundingClientRect();
+          createFirework(wordRect.left + wordRect.width / 2, wordRect.top + wordRect.height / 2);
+        }, 3200 + (index * 550));
+      });
+    }
+
+    function openMagic() {
+      document.getElementById('startOverlay').classList.add('hidden');
+      isStarted = true;
+      progress = 0;
+      fireworks = [];
+      animateText();
+    }
+
+    function resetAnimation() {
+      progress = 0;
+      fireworks = [];
+      animateText();
+    }
+
+    resize();
+    animate();
+  </script>
+</body>
+</html>
